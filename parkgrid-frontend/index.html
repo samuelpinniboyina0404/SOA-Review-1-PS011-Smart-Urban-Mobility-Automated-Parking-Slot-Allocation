@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ParkGrid Solutions - Smart Urban Mobility & Automated Parking</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Fullscreen Login Portal View -->
+  <div id="loginPortalView" class="login-container">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-brand-icon"><i class="fa-solid fa-square-parking"></i></div>
+        <h2>ParkGrid <span>Solutions</span></h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Smart Urban Mobility & Automated Slot Allocation</p>
+      </div>
+
+      <!-- Portal Type Selector Tabs -->
+      <div class="portal-selector">
+        <div class="portal-option active" id="portalDriverOption" onclick="selectPortal('DRIVER')">
+          <i class="fa-solid fa-car"></i>
+          <div>
+            <strong>Driver Portal</strong>
+            <div style="font-size: 0.75rem; opacity: 0.8;">Reserve & Pay Parking</div>
+          </div>
+        </div>
+        <div class="portal-option" id="portalAdminOption" onclick="selectPortal('ADMIN')">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>
+            <strong>Admin Portal</strong>
+            <div style="font-size: 0.75rem; opacity: 0.8;">Zones & Occupancy</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLoginSubmit(event)" style="margin-top: 1.5rem;">
+        <input type="hidden" id="selectedRole" value="ROLE_USER">
+        
+        <div class="form-group">
+          <label id="emailLabel">Driver Email Address</label>
+          <input type="email" id="loginEmail" class="form-input" placeholder="user@parkgrid.com" value="user@parkgrid.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" value="User@123" required>
+        </div>
+
+        <div id="loginAlert" style="display: none; padding: 10px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 1rem;"></div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 1rem;">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In to <span id="loginPortalBtnText">Driver Portal</span>
+        </button>
+
+        <!-- Pre-filled Quick Login Buttons -->
+        <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">⚡ Quick Demo Login Credentials</div>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-outline" style="flex: 1; font-size: 0.8rem; padding: 8px;" onclick="quickLogin('user')">
+              <i class="fa-solid fa-user"></i> Driver Demo
+            </button>
+            <button type="button" class="btn btn-outline" style="flex: 1; font-size: 0.8rem; padding: 8px;" onclick="quickLogin('admin')">
+              <i class="fa-solid fa-user-shield"></i> Admin Demo
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Application Dashboard View (Shown after authentication) -->
+  <div id="mainDashboardView" style="display: none;">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-square-parking"></i></div>
+        <div>ParkGrid <span>Solutions</span></div>
+      </div>
+      <div class="user-status">
+        <span id="roleBadge" class="badge badge-driver"><i class="fa-solid fa-user"></i> Driver Portal</span>
+        <span id="userInfo" style="font-size: 0.9rem; color: var(--text-muted);">user@parkgrid.com</span>
+        <button class="btn btn-outline" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Top Hero Metric Cards -->
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <div class="stat-label">Available Parking Slots</div>
+            <div class="stat-val" id="statAvailable">28 / 34</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div>
+            <div class="stat-label">Advance Reservations</div>
+            <div class="stat-val" id="statReserved">4</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(244, 63, 94, 0.15); color: #f87171;">
+            <i class="fa-solid fa-car-side"></i>
+          </div>
+          <div>
+            <div class="stat-label">Occupancy Rate</div>
+            <div class="stat-val" id="statOccupancy">17.6%</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <div>
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-val" id="statRevenue">$148.50</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs-nav">
+        <button class="tab-btn active" id="btnTabDriver" onclick="switchTab('driverTab')"><i class="fa-solid fa-layer-group"></i> Real-time Slot Availability</button>
+        <button class="tab-btn" id="btnTabBookings" onclick="switchTab('myBookingsTab')"><i class="fa-solid fa-ticket"></i> My Active Bookings</button>
+        <button class="tab-btn" id="btnTabAdmin" onclick="switchTab('adminTab')"><i class="fa-solid fa-chart-pie"></i> Admin Analytics & Zones</button>
+      </div>
+
+      <!-- TAB 1: Real-time Slot Availability & Grid -->
+      <div id="driverTab" class="tab-content">
+        <div class="section-title">
+          <span><i class="fa-solid fa-grip"></i> Interactive Parking Zones Layout</span>
+          <div style="display: flex; gap: 10px;">
+            <select id="zoneFilter" class="form-select" style="width: auto; padding: 6px 14px;" onchange="renderSlotGrid()">
+              <option value="ALL">All Parking Zones</option>
+              <option value="1">Tech Park Zone A (CAR)</option>
+              <option value="2">GreenEV Charging Hub (EV)</option>
+              <option value="3">Metro Transit Plaza (BIKE)</option>
+              <option value="4">VIP Executive Bay (SUV)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Container for dynamically populated zones & slot cards -->
+        <div id="zonesGridContainer"></div>
+      </div>
+
+      <!-- TAB 2: Driver Bookings & Exit Calculator -->
+      <div id="myBookingsTab" class="tab-content" style="display: none;">
+        <div class="section-title"><i class="fa-solid fa-receipt"></i> Active Reservations & Exit Tariff Calculator</div>
+        <div id="myBookingsContainer"></div>
+      </div>
+
+      <!-- TAB 3: Admin Analytics & Zone Config -->
+      <div id="adminTab" class="tab-content" style="display: none;">
+        <div class="section-title"><i class="fa-solid fa-sliders"></i> Zone Occupancy Metrics & Revenue Breakdown</div>
+        <div id="adminContainer"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Reservation Modal -->
+  <div class="modal-backdrop" id="reserveModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modalSlotTitle">Reserve Parking Slot A-101</div>
+        <button class="close-btn" onclick="closeReserveModal()">&times;</button>
+      </div>
+      <form id="reserveForm" onsubmit="handleReserveSubmit(event)">
+        <input type="hidden" id="modalSlotId">
+        <div class="form-group">
+          <label>Vehicle Number Plate</label>
+          <input type="text" id="modalVehicleNum" class="form-input" placeholder="e.g. KA-01-AB-1234" required value="KA-01-PG-2026">
+        </div>
+        <div class="form-group">
+          <label>Vehicle Type Category</label>
+          <select id="modalVehicleType" class="form-select">
+            <option value="CAR">Sedan / Hatchback (CAR - $5.00/hr)</option>
+            <option value="EV">Electric Vehicle (EV - $7.50/hr with Charger)</option>
+            <option value="SUV">SUV / Premium Bay (SUV - $12.00/hr)</option>
+            <option value="BIKE">Two-Wheeler (BIKE - $4.00/hr)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Expected Duration (Hours)</label>
+          <input type="number" id="modalDuration" class="form-input" min="1" max="24" value="2" step="0.5" required>
+        </div>
+        
+        <div class="tariff-breakdown">
+          <div class="tariff-row"><span>Base Hourly Tariff:</span><span id="previewBaseRate">$5.00/hr</span></div>
+          <div class="tariff-row"><span>Estimated Duration:</span><span id="previewDuration">2.0 Hours</span></div>
+          <div class="tariff-row total"><span>Estimated Total:</span><span id="previewTotal">$10.00</span></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+          <i class="fa-solid fa-lock"></i> Confirm Advance Reservation
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Exit Invoice & Dynamic Billing Modal -->
+  <div class="modal-backdrop" id="invoiceModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" style="color: var(--accent-emerald);">
+          <i class="fa-solid fa-file-invoice-dollar"></i> Dynamic Parking Exit Invoice
+        </div>
+        <button class="close-btn" onclick="closeInvoiceModal()">&times;</button>
+      </div>
+      <div id="invoiceContent"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    build: ./eureka-server
+    container_name: parkgrid-eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - parkgrid-net
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: parkgrid-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - parkgrid-net
+
+  auth-service:
+    build: ./auth-service
+    container_name: parkgrid-auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - parkgrid-net
+
+  parking-service:
+    build: ./parking-service
+    container_name: parkgrid-parking-service
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - parkgrid-net
+
+  booking-service:
+    build: ./booking-service
+    container_name: parkgrid-booking-service
+    ports:
+      - "8083:8083"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - PARKING_SERVICE_URL=http://parking-service:8082
+      - BILLING_SERVICE_URL=http://billing-service:8084
+    depends_on:
+      - eureka-server
+      - parking-service
+    networks:
+      - parkgrid-net
+
+  billing-service:
+    build: ./billing-service
+    container_name: parkgrid-billing-service
+    ports:
+      - "8084:8084"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - parkgrid-net
+
+networks:
+  parkgrid-net:
+    driver: bridge

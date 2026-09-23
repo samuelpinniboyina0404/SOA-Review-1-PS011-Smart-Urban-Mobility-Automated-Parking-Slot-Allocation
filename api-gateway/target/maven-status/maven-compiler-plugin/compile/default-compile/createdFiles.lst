@@ -1,0 +1,3 @@
+com\parkgrid\gateway\ApiGatewayApplication.class
+com\parkgrid\gateway\security\JwtUtil.class
+com\parkgrid\gateway\security\JwtAuthenticationFilter.class
